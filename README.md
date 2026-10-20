@@ -5,5 +5,5 @@ Roles:
 Sprint 1-3:
 Fatma: Requirements Engineer / Tester
 Aylin: Requirements Engineer / Software Designer
-Daniela: Projektmanager / Produkt Owner
-Ewan: developer / devops engineer,
+Daniela: Projektmanager / Produkt Owner / developer
+Ewan: developer / devops engineer
