@@ -1,0 +1,14 @@
+services:
+  marp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: modularmaterials-marp
+    working_dir: /app
+    volumes:
+      - "./Marp Vorlage von Rea/input:/app/input:ro"
+      - "./Marp Vorlage von Rea/imgs:/app/imgs:ro"
+      - "./Marp Vorlage von Rea/theme:/app/theme:ro"
+      - "./Marp Vorlage von Rea/output:/app/output"
+    entrypoint: ["marp"]
+    command: ["input/sample.md", "--pdf", "--allow-local-files", "-o", "output/sample.pdf"]
