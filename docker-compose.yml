@@ -12,3 +12,21 @@ services:
       - "./Marp Vorlage von Rea/output:/app/output"
     entrypoint: ["marp"]
     command: ["input/sample.md", "--pdf", "--allow-local-files", "-o", "output/sample.pdf"]
+
+
+    # Module Generator for create_module.py:
+  module-generator:
+    image: python:3.12-slim
+    working_dir: /app
+
+    volumes:
+      - "./scripts:/app/scripts:ro"
+      - "./templates:/app/templates:ro"
+      - "./modules:/app/modules"
+      - "./input:/app/input:ro"
+
+    entrypoint: ["python"]
+    command: ["scripts/create_modules.py"]
+
+    stdin_open: true
+    tty: true
