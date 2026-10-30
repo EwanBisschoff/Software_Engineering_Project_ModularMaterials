@@ -39,7 +39,7 @@ docker compose run --rm module-generator
 ____RUN Script create_module.py:
 
 python Scripts/create_module.py 
-# or
+ODER
 py Scripts/create_module.py
 
 ____create_module should ask in the console:
