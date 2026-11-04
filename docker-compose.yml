@@ -1,4 +1,12 @@
 services:
+  course-composer:
+    build:
+      context: .
+      dockerfile: Dockerfile.courses
+    volumes:
+      - "./Modules:/app/Modules:ro"
+      - "./Courses:/app/Courses:ro"
+
   marp:
     build:
       context: .

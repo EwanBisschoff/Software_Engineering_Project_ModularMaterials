@@ -1,0 +1,4 @@
+# The same module is referenced by another course, without copying its content.
+title: Another course using the shared module
+modules:
+  - id: placeholder
