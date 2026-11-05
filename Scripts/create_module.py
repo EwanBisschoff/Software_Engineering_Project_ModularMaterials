@@ -7,7 +7,7 @@ import uuid                                                     # UUID generator
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-TEMPLATE_FILE = BASE_DIR / "Templates" / "module_template.md"   #path to template 
+TEMPLATE_FILE = BASE_DIR / "templates" / "module_template.md"   #path to template 
 MODULES_DIR = BASE_DIR / "Modules"                              #path to store created modules
 
 def create_filename(title):                                     #FUNKTION FILENAME
