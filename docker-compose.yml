@@ -30,11 +30,11 @@ services:
     volumes:
       - "./scripts:/app/scripts:ro"
       - "./templates:/app/templates:ro"
-      - "./modules:/app/modules"
+      - "./Modules:/app/Modules"
       - "./input:/app/input:ro"
 
     entrypoint: ["python"]
-    command: ["scripts/create_modules.py"]
+    command: ["scripts/create_module.py"]
 
     stdin_open: true
     tty: true
