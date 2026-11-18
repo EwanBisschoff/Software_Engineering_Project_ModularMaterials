@@ -1,0 +1,98 @@
+/* @theme fhtw */
+
+@import 'default';
+
+:root {
+    --fhtw-blue: #00689d;
+    --fhtw-dark: #333333;
+    --fhtw-light: #f5f5f5;
+}
+
+/* Basic slide design */
+section {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: lightgray;
+    color: var(--fhtw-dark);
+    padding: 60px;
+}
+
+/* Main headings */
+h1 {
+    color: var(--fhtw-blue);
+    font-size: 42px;
+    font-weight: bold;
+}
+
+/* Second-level headings */
+h2 {
+    color: var(--fhtw-blue);
+    font-size: 32px;
+}
+
+/* Third-level headings */
+h3 {
+    color: var(--fhtw-dark);
+    font-size: 26px;
+}
+
+/* Normal text */
+p,
+li {
+    font-size: 22px;
+    line-height: 1.4;
+}
+
+/* Images */
+img {
+    max-width: 90%;
+    max-height: 70%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Footer */
+footer {
+    font-size: 14px;
+    color: #666666;
+}
+
+/* Page numbers */
+section::after {
+    content: attr(data-marpit-pagination);
+    position: absolute;
+    bottom: 20px;
+    right: 35px;
+    font-size: 14px;
+    color: #666666;
+}
+
+/* FHTW logo */
+section::before {
+    content: "";
+    position: absolute;
+    top: 25px;
+    right: 35px;
+    width: 500px;
+    height: 200px;
+    background-image: url("/project/Theme/images/fh_technikum_wien_bg+logo_gross.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+/* Two-column layout */
+.columns {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+.columns > div {
+    flex: 1;
+}
+
+.columns img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
