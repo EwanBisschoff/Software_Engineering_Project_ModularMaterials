@@ -58,19 +58,24 @@ def create_pdf(markdown_file, output_file):
 
     markdown_path = markdown_file.resolve()
     output_path = output_file.resolve()
+    theme_path = (BASE_DIR / "Theme" / "your.css").resolve()
 
     command = [
         "docker",
         "run",
         "--rm",
         "-v",
-        f"{markdown_path.parent}:/work",
+        f"{BASE_DIR}:/project:ro",
         "-v",
         f"{output_path.parent}:/output",
+        "-v",
+        f"{theme_path.parent}:/theme:ro",
         "marpteam/marp-cli",
-        f"/work/{markdown_path.name}",
+        f"/project/build/{markdown_path.name}",
         "--pdf",
         "--allow-local-files",
+        "--theme",
+        "/theme/your.css",
         "-o",
         f"/output/{output_path.name}"
     ]
@@ -91,6 +96,37 @@ def build_course(manifest_path):
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     combined_markdown = combine_modules(manifest)
+
+    # Create automatic overview slide from all ## headings
+        # Create automatic overview slide from all ## headings
+    titles = []
+
+    for line in combined_markdown.splitlines():
+        if line.startswith("## ") and not line.startswith("### "):
+            title = line.replace("## ", "", 1).strip()
+            if title not in titles:
+                titles.append(title)
+
+    if titles:
+        titles_slide = "# All Titles\n\n"
+
+        for title in titles:
+            titles_slide += f"- {title}\n"
+
+        titles_slide += "\n---\n\n"
+
+        # Insert overview after the first/title slide
+        parts = combined_markdown.split("\n---\n", 1)
+
+        if len(parts) == 2:
+            combined_markdown = (
+                parts[0]
+                + "\n---\n\n"
+                + titles_slide
+                + parts[1]
+            )
+        
+    combined_markdown = combined_markdown.replace("marp: true", "marp: true\npaginate: true", 1)
 
     build_file = BUILD_DIR / f"{filename}.md"
     pdf_file = OUTPUT_DIR / f"{filename}.pdf"
