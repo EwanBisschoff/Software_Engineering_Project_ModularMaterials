@@ -1,5 +1,8 @@
 ---
 marp: true
+theme: fhtw
+paginate: true
+header: '![FH Technikum Wien](../Theme/images/fh_technikum_wien_bg+logo_gross.jpg)'
 title: $title
 author: $author
 version: $version

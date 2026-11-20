@@ -1,98 +1,72 @@
 /* @theme fhtw */
-
 @import 'default';
 
-:root {
+/* Baseline from the supplied FHTW theme. Formal CI sign-off is pending. */
+section {
     --fhtw-blue: #00689d;
     --fhtw-dark: #333333;
-    --fhtw-light: #f5f5f5;
-}
-
-/* Basic slide design */
-section {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: lightgray;
-    color: var(--fhtw-dark);
-    padding: 60px;
-}
-
-/* Main headings */
-h1 {
-    color: var(--fhtw-blue);
-    font-size: 42px;
-    font-weight: bold;
-}
-
-/* Second-level headings */
-h2 {
-    color: var(--fhtw-blue);
-    font-size: 32px;
-}
-
-/* Third-level headings */
-h3 {
-    color: var(--fhtw-dark);
-    font-size: 26px;
-}
-
-/* Normal text */
-p,
-li {
-    font-size: 22px;
+    font-family: Arial, 'Liberation Sans', Helvetica, sans-serif;
+    font-size: 24px;
     line-height: 1.4;
+    color: var(--fhtw-dark);
+    background: #ffffff;
+    padding: 158px 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-bottom: 8px solid var(--fhtw-blue);
+    box-sizing: border-box;
+    position: relative;
 }
 
-/* Images */
-img {
-    max-width: 90%;
-    max-height: 70%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+h1, h2 { color: var(--fhtw-blue); }
+h1 { font-size: 42px; }
+h2 { font-size: 32px; }
+h3 { font-size: 26px; }
+p, li { font-size: 24px; }
+
+/* Reuse the repository-supplied branding image, cropped by CSS to its logo
+   region, without distorting it or creating an unofficial replacement logo. */
+header {
+    position: absolute;
+    top: 20px;
+    right: 60px;
+    left: auto;
+    width: 260px;
+    height: 130px;
+    overflow: hidden;
 }
 
-/* Footer */
+header img {
+    position: absolute;
+    left: -24px;
+    top: -20px;
+    width: 896px;
+    height: 504px;
+    max-width: none;
+    max-height: none;
+}
+
 footer {
-    font-size: 14px;
-    color: #666666;
+    position: absolute;
+    left: 60px;
+    bottom: 25px;
+    max-width: 1000px;
+    font-size: 16px;
+    color: #444444;
 }
 
-/* Page numbers */
 section::after {
     content: attr(data-marpit-pagination);
     position: absolute;
-    bottom: 20px;
-    right: 35px;
-    font-size: 14px;
-    color: #666666;
+    bottom: 25px;
+    right: 60px;
+    font-size: 16px;
+    color: #444444;
 }
 
-/* FHTW logo */
-section::before {
-    content: "";
-    position: absolute;
-    top: 25px;
-    right: 35px;
-    width: 500px;
-    height: 200px;
-    background-image: url("/project/Theme/images/fh_technikum_wien_bg+logo_gross.jpg");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-/* Two-column layout */
-.columns {
-    display: flex;
-    gap: 40px;
-    align-items: center;
-}
-
-.columns > div {
-    flex: 1;
-}
-
-.columns img {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-}
+img { max-width: 100%; max-height: 320px; object-fit: contain; }
+.columns { display: flex; gap: 40px; align-items: flex-start; }
+.columns > div { flex: 1; min-width: 0; }
+.columns img { width: 100%; height: auto; }
+section.lead { justify-content: center; }

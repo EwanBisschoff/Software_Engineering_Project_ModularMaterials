@@ -14,12 +14,15 @@ services:
     image: modularmaterials-marp
     working_dir: /app
     volumes:
-      - "./Marp Vorlage von Rea/input:/app/input:ro"
-      - "./Marp Vorlage von Rea/imgs:/app/imgs:ro"
-      - "./Marp Vorlage von Rea/theme:/app/theme:ro"
-      - "./Marp Vorlage von Rea/output:/app/output"
-    entrypoint: ["marp"]
-    command: ["input/sample.md", "--pdf", "--allow-local-files", "-o", "output/sample.pdf"]
+      - "./Scripts:/app/Scripts:ro"
+      - "./Modules:/app/Modules:ro"
+      - "./Courses:/app/Courses:ro"
+      - "./Assets:/app/Assets:ro"
+      - "./Theme:/app/Theme:ro"
+      - "./build:/app/build"
+      - "./output:/app/output"
+    entrypoint: ["python", "Scripts/build_course.py"]
+    command: ["Courses/shared-assets-demo.yaml", "--renderer", "local"]
 
 
     # Module Generator for create_module.py:
@@ -28,13 +31,12 @@ services:
     working_dir: /app
 
     volumes:
-      - "./scripts:/app/scripts:ro"
-      - "./templates:/app/templates:ro"
+      - "./Scripts:/app/Scripts:ro"
+      - "./Templates:/app/Templates:ro"
       - "./Modules:/app/Modules"
-      - "./input:/app/input:ro"
 
     entrypoint: ["python"]
-    command: ["scripts/create_module.py"]
+    command: ["Scripts/create_module.py"]
 
     stdin_open: true
     tty: true

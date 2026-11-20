@@ -1,0 +1,4 @@
+title: Shared assets and FHTW design
+modules:
+  - id: shared-assets-demo
+  - path: ../Modules/shared-assets-reuse.md

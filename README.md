@@ -1,107 +1,206 @@
-# Software_Engineering_Project_ModularMaterials
+# ModularMaterials
 
-## Compose a course (US-1.2)
+Create reusable Markdown learning modules, arrange them in YAML courses, and
+build consistently themed Marp PDFs with shared images.
 
-A course is a YAML manifest in `Courses/`. Its `modules` list defines the
-teaching order and references existing Markdown files; no content is copied.
-The same module can be referenced by any number of courses.
+## Quick start: build the example PDF
 
-```yaml
-title: Introduction to software engineering
-modules:
-  - path: ../Modules/introduction.md
-  - id: exercises
+With Docker Desktop/the Docker engine running:
+
+```sh
+docker compose run --build --rm marp
 ```
 
-Create the referenced modules first with `python Scripts/create_module.py`.
-Each entry contains exactly one `path` or `id`:
+This builds `Courses/shared-assets-demo.yaml` and writes
+`output/shared-assets-and-fhtw-design.pdf`. It demonstrates **US-3.1
+(FHTW-CI-Grundtheme)** and **US-1.3 (Gemeinsame Assets)**: two modules use the
+same centrally stored diagram, with a shared theme, branding, footer and page
+numbers. Sources are mounted read-only; `build/` and `output/` are writable.
+Generated files are ignored by Git.
 
-- `path`: a relative path from the manifest's directory to a `.md` file.
-- `id`: the filename without `.md` directly inside `Modules/`, for example
-  `intro-to-python` for `Modules/intro-to-python.md`. IDs use lowercase letters,
-  digits and single hyphens, matching the module generator's filenames.
+Build your own course with the same Docker workflow:
 
-Use a non-empty `title` and at least one module. Reorder the list to change the
-course order. Editing a shared module updates the content referenced by all
-courses. YAML manifests contain only `title` and `modules` fields.
+```sh
+docker compose run --build --rm marp Courses/example-course.yaml --renderer local
+```
 
-Install the Python dependency and validate/resolve a manifest:
+`local` here means Marp runs inside the container. No local Python, Node.js or
+Chrome installation is needed. Use the exact directory capitalization shown
+in the repository, particularly `Modules/`, `Courses/`, `Templates/` and `Theme/`.
+
+### Local installation
+
+Requires Python 3.12+, Node.js 20+, and Chrome/Chromium or Edge supported by Marp.
+Install the Python requirements and the repository's locked Marp dependency:
 
 ```sh
 python -m pip install -r requirements.txt
-python Scripts/compose_course.py Courses/example-course.yaml
-python Scripts/compose_course.py Courses/example-reuse.yaml
+npm ci --prefix "Marp Vorlage von Rea"
 ```
 
-The command prints the course title and resolved module paths in teaching
-order. Invalid YAML, duplicate mapping keys, invalid references and missing files produce an error and
-a non-zero exit code. It does not merge or render slides. In Python,
-`Scripts.compose_course.load_course(path)` returns a `Course` with `title` and
-an ordered `modules` tuple of paths. Use `--modules-dir DIRECTORY` to resolve
-IDs against a different module directory; path references are still relative
-to the manifest. Commands work from any working directory when the script and
-manifest arguments point to the correct files.
+Windows PowerShell:
 
-Alternatively, use Docker (no local Python installation required):
+```powershell
+python Scripts/build_course.py Courses/shared-assets-demo.yaml --renderer local --marp ".\Marp Vorlage von Rea\node_modules\.bin\marp.cmd"
+```
+
+Linux/macOS:
 
 ```sh
-docker compose run --build --rm course-composer Courses/example-course.yaml
+python Scripts/build_course.py Courses/shared-assets-demo.yaml --renderer local --marp "./Marp Vorlage von Rea/node_modules/.bin/marp"
 ```
 
-The `Courses/` and `Modules/` directories are mounted read-only. Both checked-in
-examples reference the existing placeholder module to demonstrate reuse.
+If `marp` is already on PATH, omit `--marp`. Alternatively, install only the
+Python requirements and use the Docker renderer:
 
-Run the tests with `python -m unittest discover -s tests -v`.
+```sh
+docker compose build marp
+python Scripts/build_course.py Courses/shared-assets-demo.yaml
+```
 
-Roles:
+The default renderer uses the locally built `modularmaterials-marp` image.
+Commands above run from the repository root. The script also works from another
+directory when given correct script, manifest and executable paths.
 
-Sprint 1-3:
-Fatma: Requirements Engineer / Tester
-Aylin: Requirements Engineer / Software Designer
-Daniela: Projektmanager / developer
-Ewan: developer / devops engineer
+## Shared images (US-1.3)
 
+Store reusable images in `Assets/images/`. Each image path is relative to the
+**module containing it**, never to the manifest or generated `build/` directory:
 
-# Startup Linux:
-systemctl --user start docker-desktop
-docker compose up
+```markdown
+![Course diagram](../Assets/images/module-reuse.svg)
+```
+
+Reference-style Markdown and HTML images also work:
+
+```markdown
+![Course diagram][diagram]
+
+[diagram]: ../Assets/images/module-reuse.svg
+
+<img src="../Assets/images/module-reuse.svg" alt="Course diagram" width="600">
+```
+
+Any number of modules can reference the same file. Edit that one file and
+rebuild the affected courses. Paths with spaces can use `<../Assets/my image.png>`
+in Markdown or URL encoding. Use forward slashes for cross-platform paths.
+
+The builder validates local images before rendering and embeds them in the
+generated Markdown/CSS. Moving modules into a combined course therefore does
+not break their paths, and identical reference labels in different modules do
+not select the wrong image. Original module and asset files remain unchanged.
+Inline/reference images, HTML `img src`, and theme CSS `url(...)` resources are
+supported. PNG/JPEG/GIF/WebP images keep Marp image modifiers. SVGs are embedded
+as HTML images; use HTML `width`/`height` to size them rather than Marp background
+modifiers. SVG files must be self-contained. HTML `srcset` is rejected with an
+error; use one `src` per image.
+
+For a missing image, the build exits with status 1 and reports the source module,
+original reference and resolved file path. It does not invoke Marp. Images in
+fenced/indented code blocks and inline code examples are not loaded. Remote
+HTTP(S) URLs stay remote and require network access during rendering; the
+local-file existence check does not validate remote availability. Prefer local
+assets for reproducible, offline builds.
+
+Validate images and prepare the combined Markdown/theme without starting Marp:
+
+```sh
+python Scripts/build_course.py Courses/shared-assets-demo.yaml --prepare-only
+```
+
+## Shared FHTW theme (US-3.1)
+
+`Theme/your.css` declares the Marp theme `fhtw`. PDF builds use Marp's `bare`
+template to avoid slideshow navigation/transition styles in print. All course builds select the theme and
+set the course title, `paginate: true`, and the footer
+`<course title> | FH Technikum Wien`. Module front matter is removed before
+combining, so each module's metadata does not create extra slides or replace
+course-wide metadata. The existing automatic overview slide is retained.
+
+The theme provides a white background, the existing FHTW blue `#00689d`, dark
+text, an Arial/Liberation Sans/Helvetica font stack, a reserved branding area,
+a footer and page numbers on every normal slide. It reuses the repository's
+supplied `Theme/images/fh_technikum_wien_bg+logo_gross.jpg`, displaying its logo
+region with CSS. Theme image paths resolve relative to the CSS file and are
+embedded during the build, so the theme works locally and in Docker without
+hard-coded `/project/` asset paths. Existing `.columns` layouts remain supported.
+The module generator's template also selects `fhtw` and pagination for previews;
+register `Theme/your.css` as a custom theme in your editor if using a Marp preview.
+
+**CI acceptance status:** implementation uses the supplied repository theme and
+branding. No authoritative CI manual or recorded Requirements Engineer approval
+is included in the repository. Formal acceptance for US-3.1 remains pending:
+the Requirements Engineer must compare the rendered demo against the current
+FHTW specifications for colors, fonts, logo clear space, footer and page numbers,
+and record approval in issue #36. Do not treat this implementation as formal
+approval. Update the shared CSS/assets if that review specifies different values.
+
+## Create a module (US-1.1)
+
+```sh
+python Scripts/create_module.py
+```
+
+Or use Docker:
+
+```sh
 docker compose run --rm module-generator
+```
 
-___RUN Script create_module.py:
-python3 Scripts/create_module.py
+The interactive generator asks for title, author, version (default `1.0`) and
+comma-separated tags. Required metadata and at least one tag must be supplied.
+It writes a new `.md` file into `Modules/` using `Templates/module_template.md`
+and refuses to overwrite an existing module. Edit that file to add teaching
+content and shared image references.
 
-___create_module should ask in the console:
+## Compose a course (US-1.2)
 
-    python3 Scripts/create_module.py
-    === Create a New Learning Module ===
-    Module title: 
-    Author: 
-    Version [1.0]: 
-    Tags (comma-separated): 
+A manifest's ordered `modules` list defines the teaching order without copying
+module sources. Modules can be reused in multiple courses:
 
-    If Error: Title, author and version are required.
+```yaml
+title: My course
+modules:
+  - id: shared-assets-demo
+  - path: ../Modules/shared-assets-reuse.md
+```
 
+Save this in `Courses/my-course.yaml`. Each entry contains exactly one `id` or
+`path`. An ID is a lowercase filename stem directly in `Modules/`, using letters,
+digits and single hyphens. A path is relative to the manifest. Supply only
+`title` and `modules`, with a non-empty title and list. Reorder the list to change
+the course order. Duplicate YAML keys and missing modules are rejected.
 
-# Startup Windows in Powershell:
-Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe"
-docker compose up
+Inspect ordered paths without building a PDF:
 
-Run module generator (in a separate terminal)
-docker compose run --rm module-generator
+```sh
+python Scripts/compose_course.py Courses/my-course.yaml
+docker compose run --build --rm course-composer Courses/shared-assets-demo.yaml
+```
 
-____RUN Script create_module.py:
+`compose_course.py --modules-dir DIRECTORY` changes ID lookup. The Python
+`Scripts.compose_course.load_course(path)` API returns the course title and an
+ordered tuple of module paths. Existing US-2.1 filename-only manifests such as
+`courses/software-engineering.yml` remain supported by `build_course.py`;
+their filenames resolve inside `Modules/`. Use path/ID entries for new courses.
 
-python Scripts/create_module.py 
-ODER
-py Scripts/create_module.py
+## Tests
 
-____create_module should ask in the console:
+```sh
+python -m unittest discover -s tests -v
+docker compose config --quiet
+```
 
-    === Create a New Learning Module ===
-    Module title: 
-    Author: 
-    Version [1.0]: 
-    Tags (comma-separated): 
+Tests cover course references, image resolution/reuse, missing-asset errors,
+module metadata removal, theme selection and renderer error handling. For visual
+verification, build the demo and inspect the logo, footer, page numbers and the
+same diagram on both content slides. The historical `Marp Vorlage von Rea/`
+sample remains in the repository; current course builds use the root `Theme/`,
+`Assets/`, `build/` and `output/` directories.
 
-    If Error: Title, author and version are required.
+## Team roles (Sprints 1-3)
 
+- Fatma: Requirements Engineer / Tester
+- Aylin: Requirements Engineer / Software Designer
+- Daniela: Project Manager / Developer
+- Ewan: Developer / DevOps Engineer
