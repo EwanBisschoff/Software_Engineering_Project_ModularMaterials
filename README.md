@@ -104,4 +104,11 @@ ____create_module should ask in the console:
     Tags (comma-separated): 
 
     If Error: Title, author and version are required.
-
+## Important existing markdown files
+### What the import does
+Copies your file into /Modules and gives it a module compatible name, adds missing metadata (title, version,...)
+### What to do-step by step
+- Copy your file into /Import, only markdown files may be imported
+- Start import using docker:
+docker compose run --rm module-importer
+- Answer the questions for missing required fields

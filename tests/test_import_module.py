@@ -20,7 +20,7 @@ class ImportModuleTests(unittest.TestCase):
         self.source = self.root / "Java Basics.md"
 
     def run_import(self, **kwargs):
-        kwargs.setdefault("author", "Ada")
+        kwargs.setdefault("author", "Author")
         kwargs.setdefault("tags", ["java"])
         return import_module(self.source, modules_dir=self.modules, **kwargs)
 

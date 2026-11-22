@@ -1,0 +1,52 @@
+services:
+  course-composer:
+    build:
+      context: .
+      dockerfile: Dockerfile.courses
+    volumes:
+      - "./Modules:/app/Modules:ro"
+      - "./Courses:/app/Courses:ro"
+
+  marp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: modularmaterials-marp
+    working_dir: /app
+    volumes:
+      - "./Marp Vorlage von Rea/input:/app/Input:ro"
+      - "./Marp Vorlage von Rea/imgs:/app/imgs:ro"
+      - "./Marp Vorlage von Rea/theme:/app/theme:ro"
+      - "./Marp Vorlage von Rea/output:/app/Output"
+    entrypoint: ["marp"]
+    command: ["Input/sample.md", "--pdf", "--allow-local-files", "-o", "output/sample.pdf"]
+
+
+    # Module Generator for create_module.py:
+  module-generator:
+    image: python:3.12-slim
+    working_dir: /app
+
+    volumes:
+      - "./Scripts:/app/scripts:ro"
+      - "./Templates:/app/Templates:ro"
+      - "./Modules:/app/Modules"
+      - "./Input:/app/Input:ro"
+
+    entrypoint: ["python"]
+    command: ["scripts/create_module.py"]
+    stdin_open: true
+    tty: true
+
+
+    # for importing existing modules
+  module-importer:
+    build:
+      context: .
+      dockerfile: Dockerfile.courses
+    entrypoint: [ "python", "Scripts/import_module.py" ]
+    volumes:
+      - "./Modules:/app/Modules"
+      - "./Import:/app/Import"
+    stdin_open: true
+    tty: true
