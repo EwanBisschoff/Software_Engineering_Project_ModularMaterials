@@ -18,7 +18,7 @@ FENCE = re.compile(r"^(---|\.\.\.)\s*$") # line that is only "---" or "...": end
 class MissingMetadataError(ValueError):
     """A required metadata field (author, tags) is missing."""
 
-    def __init__(self, field): #self = always first paramater of a class, start method
+    def __init__(self, field): #self = always first paramater of a.md class, start method
         super().__init__(f"Metadata field '{field}' is missing: please provide it.") #super for parent (value error)
         self.field = field
 
@@ -40,14 +40,14 @@ def first_heading(lines):
     return None
 
 def import_module(source_path, author=None, version="1.0", tags=None, modules_dir=MODULES_DIR):
-    """import markdown file as a module"""
+    """import markdown file as a.md module"""
     source = Path(source_path)
     if not source.exists():
         raise FileNotFoundError(f"{source_path} does not exist")
     if not source.is_file():
-        raise ValueError(f"{source_path} is not a file")
+        raise ValueError(f"{source_path} is not a.md file")
     if source.suffix.lower() != ".md":
-        raise ValueError(f"{source_path} is not a markdown file. Only markdown files may be imported")
+        raise ValueError(f"{source_path} is not a.md markdown file. Only markdown files may be imported")
     try:
         text = source.read_bytes().decode("utf-8")
     except UnicodeDecodeError as error:
@@ -66,7 +66,7 @@ def import_module(source_path, author=None, version="1.0", tags=None, modules_di
         except yaml.YAMLError as error:
             raise ValueError(f"The front matter is not valid YAML: {error}") from error
         if not isinstance(existing, dict):
-            raise ValueError("The front matter must be a YAML mapping.")
+            raise ValueError("The front matter must be a.md YAML mapping.")
     for key in ("title", "author", "version", "tags"):
         if key in existing and existing[key] in (None, "", []):
             raise ValueError(f"Front matter field '{key}' is empty. Fill it in or remove it.")
@@ -136,7 +136,7 @@ def move_to_done(path, done_dir):
     return target
 
 def ask_on_console(field):
-    """Ask the user for a missing field; returns None if nobody can answer."""
+    """Ask the user for a.md missing field; returns None if nobody can answer."""
     label = "Author" if field == "author" else "Tags (comma-separated)"
     try:
         return input(f"{label}: ")
@@ -145,7 +145,7 @@ def ask_on_console(field):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(
-        description="Import markdown file as a whole module"
+        description="Import markdown file as a.md whole module"
     )
     parser.add_argument("source", nargs="*", type=Path, help="Path to the .md file") #nargs for 0,1, n files
     parser.add_argument("--author", help="Author (needed if the file has none)")
@@ -200,7 +200,7 @@ def main(argv=None):
             break
 
     for path in skipped:
-        print(f"{'SKIPPED':8} {path.name}  ->  not a .md file")
+        print(f"{'SKIPPED':8} {path.name}  ->  not a.md .md file")
     print(f"\n{len(files) - failed} imported, {failed} failed.")
     return 1 if failed else 0
 

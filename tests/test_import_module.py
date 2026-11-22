@@ -67,7 +67,7 @@ class ImportModuleTests(unittest.TestCase):
     def test_missing_author_or_tags_is_an_error(self):
         self.source.write_text("# T\n", encoding="utf-8")
         with self.assertRaises(ValueError):
-            import_module(self.source, author=None, tags=["a"], modules_dir=self.modules)
+            import_module(self.source, author=None, tags=["a.md"], modules_dir=self.modules)
         with self.assertRaises(ValueError):
             import_module(self.source, author="A", tags=[], modules_dir=self.modules)
         self.assertFalse(self.modules.exists() and any(self.modules.iterdir()))
@@ -78,19 +78,19 @@ class ImportModuleTests(unittest.TestCase):
         folder = self.root / "folder.md"
         folder.mkdir()
         with self.assertRaises(ValueError):
-            import_module(folder, "A", tags=["a"], modules_dir=self.modules)
+            import_module(folder, "A", tags=["a.md"], modules_dir=self.modules)
         txt = self.root / "notes.txt"
         txt.write_text("# T\n", encoding="utf-8")
         with self.assertRaises(ValueError):
-            import_module(txt, "A", tags=["a"], modules_dir=self.modules)
+            import_module(txt, "A", tags=["a.md"], modules_dir=self.modules)
         empty = self.root / "empty.md"
         empty.write_text("  \n", encoding="utf-8")
         with self.assertRaises(ValueError):
-            import_module(empty, "A", tags=["a"], modules_dir=self.modules)
+            import_module(empty, "A", tags=["a.md"], modules_dir=self.modules)
         binary = self.root / "bin.md"
         binary.write_bytes(b"\xff\xfe\x00bad")
         with self.assertRaises(ValueError):
-            import_module(binary, "A", tags=["a"], modules_dir=self.modules)
+            import_module(binary, "A", tags=["a.md"], modules_dir=self.modules)
 
     def test_broken_front_matter_is_rejected(self):
         self.source.write_text("---\ntitle: [unclosed\n---\n# T\n", encoding="utf-8")
