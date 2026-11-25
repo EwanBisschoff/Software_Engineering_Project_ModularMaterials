@@ -181,13 +181,13 @@ docker compose run --build --rm course-composer Courses/shared-assets-demo.yaml
 `compose_course.py --modules-dir DIRECTORY` changes ID lookup. The Python
 `Scripts.compose_course.load_course(path)` API returns the course title and an
 ordered tuple of module paths. Existing US-2.1 filename-only manifests such as
-`courses/software-engineering.yml` remain supported by `build_course.py`;
+`Courses/software-engineering.yml` remain supported by `build_course.py`;
 their filenames resolve inside `Modules/`. Use path/ID entries for new courses.
 
 ## Tests
 
 ```sh
-python -m unittest discover -s tests -v
+python -m unittest discover -s Tests -v
 docker compose config --quiet
 ```
 
