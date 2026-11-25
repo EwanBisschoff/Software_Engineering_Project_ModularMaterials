@@ -7,5 +7,5 @@ COPY Scripts/ ./Scripts/
 COPY Modules/ ./Modules/
 COPY Courses/ ./Courses/
 
-ENTRYPOINT ["python", "Scripts/compose_course.py"]
+ENTRYPOINT ["python3", "Scripts/compose_course.py"]
 CMD ["Courses/example-course.yaml"]

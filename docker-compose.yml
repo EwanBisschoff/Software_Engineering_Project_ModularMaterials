@@ -21,7 +21,7 @@ services:
       - "./Theme:/app/Theme:ro"
       - "./build:/app/build"
       - "./output:/app/output"
-    entrypoint: ["python", "Scripts/build_course.py"]
+    entrypoint: ["/opt/venv/bin/python", "Scripts/build_course.py"]
     command: ["Courses/shared-assets-demo.yaml", "--renderer", "local"]
 
   # Module Generator for create_module.py:
@@ -32,7 +32,7 @@ services:
       - "./Scripts:/app/Scripts:ro"
       - "./Templates:/app/Templates:ro"
       - "./Modules:/app/Modules"
-    entrypoint: ["python"]
+    entrypoint: ["python3"]
     command: ["Scripts/create_module.py"]
     stdin_open: true
     tty: true
@@ -42,7 +42,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.courses
-    entrypoint: ["python", "Scripts/import_module.py"]
+    entrypoint: ["python3", "Scripts/import_module.py"]
     volumes:
       - "./Modules:/app/Modules"
       - "./Import:/app/Import"
